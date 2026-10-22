@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CyberEscape | Digital Detective</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+:root {
+    --cyan: #00f5ff;
+    --purple: #9b5cff;
+    --pink: #ff357a;
+    --bg: #050711;
+    --panel: rgba(13, 20, 40, 0.88);
+    --text: #effaff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 20% 20%,
+            rgba(0, 245, 255, .12), transparent 45%),
+        radial-gradient(ellipse at 80% 80%,
+            rgba(155, 92, 255, .15), transparent 45%);
+    pointer-events: none;
+    z-index: -2;
+}
+
+.grid {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background-image:
+        linear-gradient(rgba(0,245,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,.045) 1px, transparent 1px);
+    background-size: 45px 45px;
+    mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+#particles {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 23px 7%;
+    border-bottom: 1px solid rgba(0,245,255,.15);
+}
+
+.logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.logo span {
+    color: var(--cyan);
+    text-shadow: 0 0 15px var(--cyan);
+}
+
+.status {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    color: #5bffc6;
+    letter-spacing: 2px;
+}
+
+.status::before {
+    content: "";
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #5bffc6;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 12px #5bffc6;
+    animation: blink 1.3s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: .25; }
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    min-height: 82vh;
+    padding: 45px 20px;
+    align-items: center;
+    justify-content: center;
+    animation: screenIn .55s ease;
+}
+
+.screen.active {
+    display: flex;
+}
+
+@keyframes screenIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    text-align: center;
+}
+
+.eyebrow {
+    color: var(--cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    margin-bottom: 24px;
+}
+
+.hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(38px, 8vw, 82px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -3px;
+}
+
+.hero-title span {
+    display: block;
+    color: var(--cyan);
+    text-shadow:
+        0 0 15px rgba(0,245,255,.65),
+        0 0 45px rgba(0,245,255,.25);
+}
+
+.subtitle {
+    max-width: 510px;
+    margin: 24px auto;
+    color: #a8b5d2;
+    font-size: 19px;
+    line-height: 1.6;
+}
+
+.btn {
+    border: 1px solid var(--cyan);
+    background: linear-gradient(
+        120deg,
+        rgba(0,245,255,.15),
+        rgba(155,92,255,.2)
+    );
+    color: white;
+    padding: 17px 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: .3s;
+    margin: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    background: var(--cyan);
+    color: #050711;
+    box-shadow: 0 0 30px rgba(0,245,255,.4);
+    transform: translateY(-3px);
+}
+
+.btn.secondary {
+    border-color: #57617d;
+    background: rgba(255,255,255,.04);
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 35px;
+}
+
+.feature {
+    padding: 10px 15px;
+    border: 1px solid rgba(255,255,255,.09);
+    background: rgba(255,255,255,.025);
+    color: #b4c4e2;
+    font-size: 14px;
+}
+
+.door {
+    width: 120px;
+    height: 145px;
+    border: 2px solid var(--cyan);
+    margin: 0 auto 30px;
+    border-radius: 60px 60px 5px 5px;
+    position: relative;
+    box-shadow:
+        0 0 20px rgba(0,245,255,.15),
+        inset 0 0 25px rgba(0,245,255,.1);
+    animation: doorGlow 2.5s infinite alternate;
+}
+
+.door::before {
+    content: "⌘";
+    font-size: 48px;
+    color: var(--cyan);
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+}
+
+@keyframes doorGlow {
+    to {
+        box-shadow:
+            0 0 40px rgba(0,245,255,.35),
+            inset 0 0 35px rgba(0,245,255,.2);
+    }
+}
+
+.game-card {
+    width: 100%;
+    max-width: 690px;
+    margin: auto;
+    text-align: left;
+    background: var(--panel);
+    border: 1px solid rgba(0,245,255,.25);
+    padding: clamp(20px, 5vw, 38px);
+    box-shadow: 0 20px 80px rgba(0,0,0,.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.game-card::before {
+    content: "";
+    position: absolute;
+    height: 2px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--cyan),
+        var(--purple),
+        transparent
+    );
+}
+
+.topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.tag {
+    color: var(--cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.difficulty {
+    border: 1px solid rgba(255,255,255,.15);
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #c4cde0;
+}
+
+.progress-track {
+    width: 100%;
+    height: 4px;
+    background: #202942;
+    margin-bottom: 30px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 20%;
+    background: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan);
+    transition: width .5s;
+}
+
+.question-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(19px, 4vw, 27px);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.description {
+    color: #9baac8;
+    font-size: 17px;
+    margin-bottom: 22px;
+    line-height: 1.5;
+}
+
+.codebox {
+    padding: 22px;
+    background: #050914;
+    border: 1px solid #283650;
+    border-left: 3px solid var(--cyan);
+    color: #8bffd9;
+    font-family: Consolas, monospace;
+    font-size: clamp(14px, 3vw, 17px);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.8;
+    margin-bottom: 25px;
+}
+
+.options {
+    display: grid;
+    gap: 12px;
+}
+
+.option {
+    padding: 15px 17px;
+    border: 1px solid #26334e;
+    background: rgba(255,255,255,.025);
+    color: #dce7ff;
+    text-align: left;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.option:hover:not(:disabled) {
+    border-color: var(--cyan);
+    background: rgba(0,245,255,.07);
+    transform: translateX(4px);
+}
+
+.option:disabled {
+    cursor: default;
+}
+
+.option.correct {
+    border-color: #36f7a0;
+    background: rgba(54,247,160,.12);
+    color: #72ffc0;
+}
+
+.option.wrong {
+    border-color: var(--pink);
+    background: rgba(255,53,122,.12);
+    color: #ff8eaf;
+}
+
+.feedback {
+    display: none;
+    padding: 16px;
+    margin-top: 20px;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.feedback.show {
+    display: block;
+    animation: screenIn .3s ease;
+}
+
+.feedback.good {
+    border: 1px solid #36f7a0;
+    color: #9affd0;
+    background: rgba(54,247,160,.06);
+}
+
+.feedback.bad {
+    border: 1px solid var(--pink);
+    color: #ff9fba;
+    background: rgba(255,53,122,.06);
+}
+
+.action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.action-row .btn {
+    margin: 0;
+    flex: 1;
+}
+
+#hintBox {
+    display: none;
+    padding: 12px;
+    margin-top: 15px;
+    color: #ffe9a5;
+    border: 1px dashed #b79c4a;
+    background: rgba(255,220,100,.04);
+}
+
+#hintBox.show {
+    display: block;
+}
+
+.result-icon {
+    font-size: clamp(75px, 15vw, 120px);
+    margin-bottom: 20px;
+    animation: resultPop .7s ease;
+}
+
+@keyframes resultPop {
+    0% { transform: scale(.3) rotate(-15deg); opacity: 0; }
+    65% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.result-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(29px, 6vw, 52px);
+    line-height: 1.3;
+    margin-bottom: 15px;
+}
+
+.failed .result-title {
+    color: var(--pink);
+    text-shadow: 0 0 30px rgba(255,53,122,.4);
+}
+
+.success .result-title {
+    color: var(--cyan);
+    text-shadow: 0 0 30px rgba(0,245,255,.4);
+}
+
+.failed {
+    animation: failShake .45s ease;
+}
+
+@keyframes failShake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-7px); }
+    40% { transform: translateX(7px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+.result-text {
+    color: #aab8d4;
+    font-size: 19px;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto 25px;
+}
+
+.result-box {
+    display: inline-block;
+    border: 1px solid rgba(0,245,255,.2);
+    background: rgba(0,245,255,.04);
+    padding: 18px 28px;
+    margin-bottom: 25px;
+}
+
+.result-box strong {
+    display: block;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--cyan);
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.small-text {
+    color: #8796b5;
+    font-size: 14px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #687692;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,.05);
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 550px) {
+    header {
+        padding: 18px 5%;
+    }
+
+    .logo {
+        font-size: 13px;
+    }
+
+    .status {
+        font-size: 8px;
+    }
+
+    .screen {
+        padding: 30px 14px;
+    }
+
+    .game-card {
+        padding: 22px 16px;
+    }
+
+    .action-row {
+        flex-direction: column;
+    }
+
+    .action-row .btn {
+        width: 100%;
+    }
+
+    .hero-title {
+        letter-spacing: -1px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="grid"></div>
+<canvas id="particles"></canvas>
+
+<header>
+    <div class="logo">CYBER<span>ESCAPE</span></div>
+    <div class="status">SYSTEM ONLINE</div>
+</header>
+
+<!-- OPENING SCREEN -->
+
+<section id="home" class="screen active">
+    <div class="container">
+
+        <div class="eyebrow">THE DIGITAL ESCAPE PROTOCOL</div>
+
+        <div class="door"></div>
+
+        <h1 class="hero-title">
+            THINK.
+            <span>DECODE.</span>
+            ESCAPE.
+        </h1>
+
+        <p class="subtitle">
+            Five locked missions. Five Java challenges.
+            One chance to prove your skills.
+            Can you escape the digital world?
+        </p>
+
+        <button class="btn" onclick="startGame()">
+            ENTER THE CYBER WORLD →
+        </button>
+
+        <div class="features">
+            <div class="feature">⌘ Java Challenges</div>
+            <div class="feature">◈ Logic Missions</div>
+            <div class="feature">⚡ Unlock System</div>
+        </div>
+
+    </div>
+</section>
+
+<!-- GAME SCREEN -->
+
+<section id="game" class="screen">
+    <div class="game-card">
+
+        <div class="topline">
+            <div id="missionTag" class="tag">MISSION 01 / 05</div>
+            <div id="difficulty" class="difficulty">EASY</div>
+        </div>
+
+        <div class="progress-track">
+            <div id="progress" class="progress-fill"></div>
+        </div>
+
+        <h2 id="questionTitle" class="question-title">
+            What is the output?
+        </h2>
+
+        <p id="description" class="description"></p>
+
+        <pre id="code" class="codebox"></pre>
+
+        <div id="options" class="options"></div>
+
+        <div id="feedback" class="feedback"></div>
+
+        <div id="hintBox"></div>
+
+        <div class="action-row">
+            <button id="hintButton" class="btn secondary"
+                onclick="showHint()">
+                💡 GET A HINT
+            </button>
+
+            <button id="nextButton" class="btn hidden"
+                onclick="nextMission()">
+                NEXT MISSION →
+            </button>
+
+            <button id="retryButton" class="btn hidden"
+                onclick="retryMission()">
+                ↻ RETRY MISSION
+            </button>
+        </div>
+
+        <p class="small-text" style="margin-top:20px">
+            Your mission. Your decision. Your escape.
+        </p>
+
+    </div>
+</section>
+
+<!-- FAILED SCREEN -->
+
+<section id="failed" class="screen">
+    <div class="container failed">
+
+        <div class="eyebrow">CONNECTION INTERRUPTED</div>
+
+        <div class="result-icon">💔</div>
+
+        <h1 class="result-title">MISSION FAILED</h1>
+
+        <p id="failedText" class="result-text">
+            The digital door remains locked.
+            Every detective gets another chance.
+        </p>
+
+        <div class="result-box">
+            <strong id="failedMission">MISSION 01</strong>
+            <span class="small-text">Your mission is not over.</span>
+        </div>
+
+        <div>
+            <button class="btn" onclick="retryMission()">
+                ↻ TRY AGAIN
+            </button>
+
+            <button class="btn secondary" onclick="showHome()">
+                MAIN MENU
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<!-- NEXT MISSION SCREEN -->
+
+<section id="unlocked" class="screen">
+    <div class="container success">
+
+        <div class="eyebrow">SECURITY CHECK PASSED</div>
+
+        <div class="result-icon">🔓</div>
+
+        <h1 class="result-title">ACCESS GRANTED</h1>
+
+        <p id="unlockedText" class="result-text">
+            Correct answer! You have been selected for the next level.
+        </p>
+
+        <div class="result-box">
+            <strong id="unlockedMission">MISSION 02</strong>
+            <span class="small-text">NEW AREA UNLOCKED</span>
+        </div>
+
+        <div>
+            <button class="btn" onclick="nextMission()">
+                ENTER NEXT MISSION →
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<!-- VICTORY SCREEN -->
+
+<section id="victory" class="screen">
+    <div class="container success">
+
+        <div class="eyebrow">ALL SECURITY LAYERS BYPASSED</div>
+
+        <div class="result-icon">🏆</div>
+
+        <h1 class="result-title">YOU ESCAPED!</h1>
+
+        <p class="result-text">
+            You conquered all five missions.
+            The digital world is yours to explore.
+        </p>
+
+        <div class="result-box">
+            <strong id="finalScore">5 / 5</strong>
+            <span class="small-text">MISSIONS COMPLETED</span>
+        </div>
+
+        <div>
+            <button class="btn" onclick="startGame()">
+                ↻ PLAY AGAIN
+            </button>
+
+            <button class="btn secondary" onclick="showHome()">
+                MAIN MENU
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    CYBERESCAPE © 2026 · A JAVA CODING ADVENTURE
+</footer>
+
+<script>
+
+// ====================================
+// CYBERESCAPE GAME ENGINE
+// ====================================
+
+// Five missions, one question per mission.
+// Questions are selected randomly from each pool.
+
+const questionBank = [
+
+    // MISSION 1: EASY
+    [
+        {
+            title: "MISSION 01 — THE ENTRY GATE",
+            description: "The first door is locked. Find the output to unlock it.",
+            code: 'System.out.println(5 + 3);',
+            options: ["53", "8", "2", "15"],
+            answer: "8",
+            hint: "The + operator adds two numbers.",
+            explanation: "5 + 3 = 8. The door opens!",
+            difficulty: "EASY"
+        },
+        {
+            title: "MISSION 01 — THE ENTRY GATE",
+            description: "A secret message is hidden inside this statement.",
+            code: 'System.out.println("JAVA");',
+            options: ["JAVA", "java", "J A V A", "Error"],
+            answer: "JAVA",
+            hint: "Text inside double quotes is printed as it is.",
+            explanation: 'The output is JAVA because the text is inside double quotes.',
+            difficulty: "EASY"
+        },
+        {
+            title: "MISSION 01 — THE ENTRY GATE",
+            description: "Decode the final number.",
+            code: 'System.out.println(10 - 4);',
+            options: ["14", "6", "4", "104"],
+            answer: "6",
+            hint: "The minus operator subtracts the second number.",
+            explanation: "10 - 4 = 6.",
+            difficulty: "EASY"
+        },
+        {
+            title: "MISSION 01 — THE ENTRY GATE",
+            description: "A number is waiting behind the digital lock.",
+            code: 'System.out.println(4 * 2);',
+            options: ["6", "42", "8", "2"],
+            answer: "8",
+            hint: "The * symbol means multiplication.",
+            explanation: "4 multiplied by 2 equals 8.",
+            difficulty: "EASY"
+        },
+        {
+            title: "MISSION 01 — THE ENTRY GATE",
+            description: "Choose the correct output.",
+            code: 'int x = 7;\nSystem.out.println(x);',
+            options: ["x", "0", "7", "Error"],
+            answer: "7",
+            hint: "The variable x stores the value 7.",
+            explanation: "Printing x displays the value stored in x: 7.",
+            difficulty: "EASY"
+        }
+    ],
+
+    // MISSION 2: EASY
+    [
+        {
+            title: "MISSION 02 — THE VARIABLE VAULT",
+            description: "The vault contains a changing number.",
+            code: 'int x = 10;\nx = 20;\nSystem.out.println(x);',
+            options: ["10", "20", "30", "Error"],
+            answer: "20",
+            hint: "The second assignment replaces the first value.",
+            explanation: "The latest value assigned to x is 20.",
+            difficulty: "EASY"
+        },
+        {
+            title: "MISSION 02 — THE VARIABLE VAULT",
+            description: "Find the number hidden in the variable.",
+            code: 'int a = 4;\nint b = 6;\nSystem.out.println(a + b);',
+            options: ["46", "2", "10", "24"],
+            answer: "10",
+            hint: "Both variables contain numbers. Add their values.",
+            explanation: "4 + 6 = 10.",
+            difficulty: "EASY"
+        },
+        {
+            title: "MISSION 02 — THE VARIABLE VAULT",
+            description: "A secret calculation is required.",
+            code: 'int n = 12;\nSystem.out.println(n / 3);',
+            options: ["4", "9", "36", "123"],
+            answer: "4",
+            hint: "The / operator divides the number.",
+            explanation: "12 divided by 3 equals 4.",
+            difficulty: "EASY"
+        },
+        {
+            title: "MISSION 02 — THE VARIABLE VAULT",
+            description: "Identify the output before the timer runs out.",
+            code: 'int x = 5;\nSystem.out.println(x + 2);',
+            options: ["52", "7", "3", "5"],
+            answer: "7",
+            hint: "The stored value is 5. Add 2 to it.",
+            explanation: "5 + 2 = 7.",
+            difficulty: "EASY"
+        },
+        {
+            title: "MISSION 02 — THE VARIABLE VAULT",
+            description: "Decode the final value.",
+            code: 'int score = 9;\nscore = score + 1;\nSystem.out.println(score);',
+            options: ["9", "91", "10", "1"],
+            answer: "10",
+            hint: "The old score increases by one.",
+            explanation: "9 + 1 = 10.",
+            difficulty: "EASY"
+        }
+    ],
+
+    // MISSION 3: MEDIUM
+    [
+        {
+            title: "MISSION 03 — THE LOGIC LAB",
+            description: "The security system checks a condition.",
+            code: 'int n = 7;\nif (n > 5)\n    System.out.println("A");\nelse\n    System.out.println("B");',
+            options: ["A", "B", "A B", "Error"],
+            answer: "A",
+            hint: "Is 7 greater than 5?",
+            explanation: "The condition is true, so A is printed.",
+            difficulty: "MEDIUM"
+        },
+        {
+            title: "MISSION 03 — THE LOGIC LAB",
+            description: "Find the result of the comparison.",
+            code: 'int a = 5;\nif (a == 5)\n    System.out.println("OPEN");\nelse\n    System.out.println("CLOSED");',
+            options: ["5", "CLOSED", "OPEN", "Error"],
+            answer: "OPEN",
+            hint: "The == operator checks whether two values are equal.",
+            explanation: "a equals 5, so OPEN is printed.",
+            difficulty: "MEDIUM"
+        },
+        {
+            title: "MISSION 03 — THE LOGIC LAB",
+            description: "Only the correct condition will unlock the lab.",
+            code: 'int x = 4;\nif (x < 3)\n    System.out.println("YES");\nelse\n    System.out.println("NO");',
+            options: ["YES", "NO", "4", "Error"],
+            answer: "NO",
+            hint: "Is 4 less than 3?",
+            explanation: "The condition is false, so NO is printed.",
+            difficulty: "MEDIUM"
+        },
+        {
+            title: "MISSION 03 — THE LOGIC LAB",
+            description: "Decode the output of this decision.",
+            code: 'int marks = 80;\nif (marks >= 50)\n    System.out.println("PASS");\nelse\n    System.out.println("FAIL");',
+            options: ["FAIL", "PASS", "80", "Error"],
+            answer: "PASS",
+            hint: "80 is greater than or equal to 50.",
+            explanation: "The condition is true, so PASS is printed.",
+            difficulty: "MEDIUM"
+        },
+        {
+            title: "MISSION 03 — THE LOGIC LAB",
+            description: "One condition stands between you and the next room.",
+            code: 'int n = 6;\nif (n % 2 == 0)\n    System.out.println("EVEN");\nelse\n    System.out.println("ODD");',
+            options: ["ODD", "EVEN", "6", "Error"],
+            answer: "EVEN",
+            hint: "The % operator gives the remainder. An even number has remainder 0 when divided by 2.",
+            explanation: "6 % 2 equals 0, so EVEN is printed.",
+            difficulty: "MEDIUM"
+        }
+    ],
+
+    // MISSION 4: TRICKY
+    [
+        {
+            title: "MISSION 04 — THE TRICK CODE",
+            description: "A tiny symbol hides a big trick. Read carefully!",
+            code: 'int x = 5;\nSystem.out.println(x++);\nSystem.out.println(x);',
+            options: ["5 then 5", "6 then 6", "5 then 6", "6 then 5"],
+            answer: "5 then 6",
+            hint: "Post-increment prints the current value first, then increases it.",
+            explanation: "x++ prints 5 first. Then x becomes 6.",
+            difficulty: "TRICKY"
+        },
+        {
+            title: "MISSION 04 — THE TRICK CODE",
+            description: "The order of operations matters here.",
+            code: 'System.out.println(2 + 3 * 2);',
+            options: ["10", "12", "8", "7"],
+            answer: "8",
+            hint: "Multiplication happens before addition.",
+            explanation: "3 * 2 = 6, then 2 + 6 = 8.",
+            difficulty: "TRICKY"
+        },
+        {
+            title: "MISSION 04 — THE TRICK CODE",
+            description: "Can you spot the difference between ++x and x++?",
+            code: 'int x = 4;\nSystem.out.println(++x);',
+            options: ["4", "5", "6", "Error"],
+            answer: "5",
+            hint: "Pre-increment increases the value before printing.",
+            explanation: "++x changes 4 to 5 before printing it.",
+            difficulty: "TRICKY"
+        },
+        {
+            title: "MISSION 04 — THE TRICK CODE",
+            description: "Two comparisons. One final result.",
+            code: 'int x = 5;\nSystem.out.println(x > 3 && x < 10);',
+            options: ["true", "false", "5", "Error"],
+            answer: "true",
+            hint: "Both conditions must be true when using &&.",
+            explanation: "5 is greater than 3 and less than 10. Both are true.",
+            difficulty: "TRICKY"
+        },
+        {
+            title: "MISSION 04 — THE TRICK CODE",
+            description: "The vault is testing your understanding of division.",
+            code: 'System.out.println(7 / 2);',
+            options: ["3.5", "4", "3", "72"],
+            answer: "3",
+            hint: "Both numbers are integers. Java integer division discards the fractional part.",
+            explanation: "Integer division gives 3, not 3.5.",
+            difficulty: "TRICKY"
+        }
+    ],
+
+    // MISSION 5: FINAL CHALLENGE
+    [
+        {
+            title: "MISSION 05 — FINAL ESCAPE",
+            description: "The final door requires you to trace a loop.",
+            code: 'for (int i = 1; i <= 3; i++) {\n    System.out.print(i);\n}',
+            options: ["123", "0123", "111", "1234"],
+            answer: "123",
+            hint: "The loop prints 1, then 2, then 3. It stops after 3.",
+            explanation: "The loop prints 1, 2 and 3 without spaces: 123.",
+            difficulty: "FINAL CHALLENGE"
+        },
+        {
+            title: "MISSION 05 — FINAL ESCAPE",
+            description: "The system repeats until the condition becomes false.",
+            code: 'for (int i = 1; i <= 2; i++) {\n    System.out.print("X");\n}',
+            options: ["X", "XX", "XXX", "Error"],
+            answer: "XX",
+            hint: "The loop runs for i = 1 and i = 2.",
+            explanation: "The loop prints X twice, giving XX.",
+            difficulty: "FINAL CHALLENGE"
+        },
+        {
+            title: "MISSION 05 — FINAL ESCAPE",
+            description: "Only a careful detective can find the last value.",
+            code: 'int x = 2;\nx += 3;\nSystem.out.println(x);',
+            options: ["2", "23", "5", "6"],
+            answer: "5",
+            hint: "The += operator adds to the existing value.",
+            explanation: "x += 3 means x = x + 3. The result is 5.",
+            difficulty: "FINAL CHALLENGE"
+        },
+        {
+            title: "MISSION 05 — FINAL ESCAPE",
+            description: "One last logic check stands between you and freedom.",
+            code: 'int x = 3;\nSystem.out.println(x == 3 || x == 5);',
+            options: ["true", "false", "3", "Error"],
+            answer: "true",
+            hint: "The || operator needs at least one condition to be true.",
+            explanation: "x == 3 is true, so the overall result is true.",
+            difficulty: "FINAL CHALLENGE"
+        },
+        {
+            title: "MISSION 05 — FINAL ESCAPE",
+            description: "The final system asks for the exact output.",
+            code: 'int x = 3;\nSystem.out.println(x * x);',
+            options: ["6", "9", "33", "3"],
+            answer: "9",
+            hint: "Multiply the value by itself.",
+            explanation: "3 * 3 = 9. The final door opens!",
+            difficulty: "FINAL CHALLENGE"
+        }
+    ]
+
+];
+
+let mission = 0;
+let score = 0;
+let selectedQuestions = [];
+let answered = false;
+
+// Shuffle a question pool and select a fresh question per mission.
+// Avoid repeating the same question in consecutive games when possible.
+
+function shuffle(array) {
+    const copy = [...array];
+
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+
+    return copy;
+}
+
+function getFreshQuestions() {
+    const previous = JSON.parse(
+        sessionStorage.getItem("previousQuestions") || "[]"
+    );
+
+    const chosen = [];
+
+    questionBank.forEach((pool, index) => {
+        let candidates = shuffle(pool);
+
+        if (pool.length > 1 && previous[index]) {
+            const withoutPrevious = candidates.filter(
+                question => question.code !== previous[index]
+            );
+
+            if (withoutPrevious.length > 0) {
+                candidates = withoutPrevious;
+            }
+        }
+
+        chosen.push(candidates[0]);
+    });
+
+    sessionStorage.setItem(
+        "previousQuestions",
+        JSON.stringify(chosen.map(q => q.code))
+    );
+
+    return chosen;
+}
+
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+function startGame() {
+    mission = 0;
+    score = 0;
+    selectedQuestions = getFreshQuestions();
+
+    showScreen("game");
+    renderQuestion();
+}
+
+function renderQuestion() {
+    answered = false;
+
+    const q = selectedQuestions[mission];
+
+    document.getElementById("missionTag").textContent =
+        `MISSION ${String(mission + 1).padStart(2, "0")} / 05`;
+
+    document.getElementById("difficulty").textContent =
+        q.difficulty;
+
+    document.getElementById("progress").style.width =
+        `${((mission + 1) / 5) * 100}%`;
+
+    document.getElementById("questionTitle").textContent =
+        q.title;
+
+    document.getElementById("description").textContent =
+        q.description;
+
+    document.getElementById("code").textContent =
+        q.code;
+
+    document.getElementById("feedback").className = "feedback";
+    document.getElementById("feedback").textContent = "";
+
+    document.getElementById("hintBox").className = "";
+    document.getElementById("hintBox").textContent = "";
+
+    document.getElementById("hintButton").classList.remove("hidden");
+    document.getElementById("nextButton").classList.add("hidden");
+    document.getElementById("retryButton").classList.add("hidden");
+
+    const optionsContainer = document.getElementById("options");
+
+    optionsContainer.innerHTML = "";
+
+    // Shuffle the answer options too.
+    shuffle(q.options).forEach(optionText => {
+        const button = document.createElement("button");
+
+        button.className = "option";
+        button.textContent = optionText;
+
+        button.addEventListener("click", () => {
+            checkAnswer(optionText, button);
+        });
+
+        optionsContainer.appendChild(button);
+    });
+}
+
+function checkAnswer(choice, button) {
+    if (answered) return;
+
+    answered = true;
+
+    const q = selectedQuestions[mission];
+
+    document.querySelectorAll(".option").forEach(option => {
+        option.disabled = true;
+
+        if (option.textContent === q.answer) {
+            option.classList.add("correct");
+        }
+    });
+
+    const feedback = document.getElementById("feedback");
+
+    if (choice === q.answer) {
+        score++;
+
+        feedback.className = "feedback show good";
+
+        feedback.innerHTML =
+            `<strong>✓ CORRECT ACCESS CODE</strong><br>` +
+            `${q.explanation}`;
+
+        document.getElementById("hintButton").classList.add("hidden");
+
+        setTimeout(() => {
+            if (mission === 4) {
+                showVictory();
+            } else {
+                document.getElementById("unlockedMission").textContent =
+                    `MISSION ${String(mission + 2).padStart(2, "0")}`;
+
+                document.getElementById("unlockedText").textContent =
+                    `Correct! ${q.explanation} ` +
+                    `You have been selected for the next level.`;
+
+                showScreen("unlocked");
+            }
+        }, 1100);
+
+    } else {
+        button.classList.add("wrong");
+
+        feedback.className = "feedback show bad";
+
+        feedback.innerHTML =
+            `<strong>✕ ACCESS DENIED</strong><br>` +
+            `That answer is incorrect. Your mission has failed.`;
+
+        setTimeout(() => {
+            document.getElementById("failedMission").textContent =
+                `MISSION ${String(mission + 1).padStart(2, "0")}`;
+
+            document.getElementById("failedText").textContent =
+                `The correct answer was "${q.answer}". ` +
+                ` ${q.explanation} Retry this mission and try again!`;
+
+            showScreen("failed");
+        }, 850);
+    }
+}
+
+function showHint() {
+    const q = selectedQuestions[mission];
+
+    const hintBox = document.getElementById("hintBox");
+
+    hintBox.textContent = "💡 HINT: " + q.hint;
+    hintBox.classList.add("show");
+}
+
+function retryMission() {
+    // Retry the current mission without changing its question.
+    showScreen("game");
+    renderQuestion();
+}
+
+function nextMission() {
+    if (mission < 4) {
+        mission++;
+        showScreen("game");
+        renderQuestion();
+    } else {
+        showVictory();
+    }
+}
+
+function showVictory() {
+    document.getElementById("finalScore").textContent =
+        `${score} / 5`;
+
+    showScreen("victory");
+}
+
+function showHome() {
+    showScreen("home");
+}
+
+// ====================================
+// ANIMATED BACKGROUND PARTICLES
+// ====================================
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+
+function resizeCanvas() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = window.innerWidth * ratio;
+    canvas.height = window.innerHeight * ratio;
+
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    const count = Math.min(
+        65,
+        Math.floor(window.innerWidth / 16)
+    );
+
+    particles = Array.from({ length: count }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 2 + 0.5,
+        speed: Math.random() * 0.45 + 0.12,
+        alpha: Math.random() * 0.55 + 0.15
+    }));
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    particles.forEach(p => {
+        p.y -= p.speed;
+
+        if (p.y < 0) {
+            p.y = window.innerHeight;
+            p.x = Math.random() * window.innerWidth;
+        }
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = `rgba(0,245,255,${p.alpha})`;
+        ctx.fill();
+    });
+
+    requestAnimationFrame(animateParticles);
+}
+
+window.addEventListener("resize", resizeCanvas);
+
+resizeCanvas();
+animateParticles();
+
+</script>
+
+</body>
+</html>
